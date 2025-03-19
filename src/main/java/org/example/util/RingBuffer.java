@@ -7,7 +7,7 @@ public class RingBuffer<T> {
     private final T[] buffer;
     private int writeIndex = 0;
     private int readIndex = 0;
-    private int size = 0;
+    private volatile int size = 0;
 
     private final Lock lock = new ReentrantLock();
     private final Condition notFull = lock.newCondition();
@@ -50,29 +50,14 @@ public class RingBuffer<T> {
     }
 
     public boolean isEmpty() {
-        lock.lock();
-        try {
-            return size == 0;
-        } finally {
-            lock.unlock();
-        }
+        return size == 0;
     }
 
     public boolean isFull() {
-        lock.lock();
-        try {
-            return size == buffer.length;
-        } finally {
-            lock.unlock();
-        }
+        return size == buffer.length;
     }
 
     public int getSize() {
-        lock.lock();
-        try {
-            return size;
-        } finally {
-            lock.unlock();
-        }
+        return size;
     }
 }
